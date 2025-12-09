@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import { Users, Plus, ChevronRight } from 'lucide-react';
+import { Users, Plus, ChevronRight, X, Loader2 } from 'lucide-react';
 
 const Sidebar = () => {
   const [communities, setCommunities] = useState([]);
@@ -53,41 +53,60 @@ const Sidebar = () => {
 
   return (
     <>
-      <aside className="fixed left-0 top-16 bottom-0 w-64 bg-sidebar border-r border-sidebar-border overflow-y-auto hidden md:block">
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+      <aside 
+        className="fixed left-0 top-16 bottom-0 w-72 overflow-y-auto hidden md:block"
+        style={{
+          background: 'linear-gradient(180deg, hsl(var(--sidebar-background)) 0%, hsl(var(--background)) 100%)',
+          borderRight: '1px solid hsl(var(--sidebar-border) / 0.5)',
+        }}
+      >
+        <div className="p-5">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
               Communities
             </h2>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="p-2 rounded-lg hover:bg-sidebar-accent text-primary transition-colors"
+              className="p-2.5 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-300 hover:scale-105 active:scale-95"
               title="Create Community"
             >
               <Plus className="w-4 h-4" />
             </button>
           </div>
 
+          {/* Community List */}
           <div className="space-y-1">
-            {communities.map((community) => {
+            {communities.map((community, index) => {
               const isActive = location.pathname === `/community/${community.id}`;
               return (
                 <Link
                   key={community.id}
                   to={`/community/${community.id}`}
                   className={`sidebar-item ${isActive ? 'sidebar-item-active' : ''}`}
+                  style={{ animationDelay: `${index * 0.05}s` }}
                 >
-                  <Users className="w-5 h-5 flex-shrink-0" />
-                  <span className="truncate">{community.name}</span>
-                  <ChevronRight className="w-4 h-4 ml-auto opacity-50" />
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
+                    isActive 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground'
+                  }`}>
+                    <Users className="w-4 h-4" />
+                  </div>
+                  <span className="truncate flex-1 text-sm">{community.name}</span>
+                  <ChevronRight className={`w-4 h-4 opacity-0 -translate-x-2 transition-all duration-300 ${
+                    isActive ? 'opacity-100 translate-x-0' : 'group-hover:opacity-50'
+                  }`} />
                 </Link>
               );
             })}
 
             {communities.length === 0 && (
-              <p className="text-sm text-muted-foreground px-4 py-2">
-                No communities yet. Create one!
-              </p>
+              <div className="text-center py-8 text-muted-foreground">
+                <Users className="w-10 h-10 mx-auto mb-3 opacity-30" />
+                <p className="text-sm">No communities yet</p>
+                <p className="text-xs mt-1 opacity-70">Create the first one!</p>
+              </div>
             )}
           </div>
         </div>
@@ -95,19 +114,42 @@ const Sidebar = () => {
 
       {/* Create Community Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="glass-card rounded-xl p-6 w-full max-w-md animate-fade-in">
-            <h3 className="text-xl font-bold mb-4 gradient-text">Create Community</h3>
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{
+            background: 'hsl(var(--background) / 0.8)',
+            backdropFilter: 'blur(8px)',
+          }}
+          onClick={() => setShowCreateModal(false)}
+        >
+          <div 
+            className="glass-card rounded-3xl p-8 w-full max-w-md animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold gradient-text">Create Community</h3>
+              <button
+                onClick={() => {
+                  setShowCreateModal(false);
+                  setError('');
+                  setNewCommunity({ name: '', description: '' });
+                }}
+                className="p-2 rounded-xl hover:bg-muted transition-colors"
+              >
+                <X className="w-5 h-5 text-muted-foreground" />
+              </button>
+            </div>
             
-            <form onSubmit={handleCreateCommunity} className="space-y-4">
+            <form onSubmit={handleCreateCommunity} className="space-y-5">
               {error && (
-                <div className="p-3 bg-destructive/20 border border-destructive rounded-lg text-destructive text-sm">
+                <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-xl text-destructive text-sm animate-scale-in">
                   {error}
                 </div>
               )}
 
-              <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-foreground/70 ml-1">
                   Community Name
                 </label>
                 <input
@@ -119,14 +161,14 @@ const Sidebar = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-foreground/70 ml-1">
                   Description
                 </label>
                 <textarea
                   value={newCommunity.description}
                   onChange={(e) => setNewCommunity({ ...newCommunity, description: e.target.value })}
-                  className="input-field min-h-[100px] resize-none"
+                  className="input-field min-h-[120px] resize-none"
                   placeholder="What is this community about?"
                 />
               </div>
@@ -139,16 +181,20 @@ const Sidebar = () => {
                     setError('');
                     setNewCommunity({ name: '', description: '' });
                   }}
-                  className="btn-ghost flex-1"
+                  className="btn-ghost flex-1 py-4"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-primary flex-1"
+                  className="btn-primary flex-1 flex items-center justify-center gap-2"
                 >
-                  {loading ? 'Creating...' : 'Create'}
+                  {loading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    'Create'
+                  )}
                 </button>
               </div>
             </form>
