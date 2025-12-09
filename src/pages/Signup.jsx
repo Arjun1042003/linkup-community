@@ -70,10 +70,20 @@ const Signup = () => {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-secondary to-primary mb-6 animate-float">
               <Sparkles className="w-8 h-8 text-secondary-foreground" />
             </div>
-            <h1 className="text-5xl font-bold tracking-tight mb-3">
-              <span className="gradient-text">Join Us</span>
+            <h1 className="text-5xl font-bold tracking-tight mb-3 overflow-hidden">
+              <span className="gradient-text inline-block animate-slide-up">B</span>
+              <span className="gradient-text inline-block animate-slide-up" style={{ animationDelay: '0.05s' }}>r</span>
+              <span className="gradient-text inline-block animate-slide-up" style={{ animationDelay: '0.1s' }}>i</span>
+              <span className="gradient-text inline-block animate-slide-up" style={{ animationDelay: '0.15s' }}>s</span>
+              <span className="gradient-text inline-block animate-slide-up" style={{ animationDelay: '0.2s' }}>t</span>
+              <span className="gradient-text inline-block animate-slide-up" style={{ animationDelay: '0.25s' }}>l</span>
+              <span className="gradient-text inline-block animate-slide-up" style={{ animationDelay: '0.3s' }}>e</span>
+              <span className="gradient-text inline-block animate-slide-up" style={{ animationDelay: '0.35s' }}>c</span>
+              <span className="gradient-text inline-block animate-slide-up" style={{ animationDelay: '0.4s' }}>o</span>
+              <span className="gradient-text inline-block animate-slide-up" style={{ animationDelay: '0.45s' }}>n</span>
+              <span className="gradient-text inline-block animate-slide-up" style={{ animationDelay: '0.5s' }}>e</span>
             </h1>
-            <p className="text-muted-foreground text-lg font-light">
+            <p className="text-muted-foreground text-lg font-light animate-fade-in" style={{ animationDelay: '0.6s', animationFillMode: 'both' }}>
               Create your account and start connecting
             </p>
           </div>
