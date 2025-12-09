@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import api from '../api/axios';
 import Layout from '../components/Layout';
 import PostCard from '../components/PostCard';
-import { Loader2, Users, Inbox } from 'lucide-react';
+import { Users, Inbox, Sparkles } from 'lucide-react';
 
 const Community = () => {
   const { id } = useParams();
@@ -42,8 +42,11 @@ const Community = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center animate-pulse-glow">
+            <Sparkles className="w-8 h-8 text-primary-foreground" />
+          </div>
+          <p className="text-muted-foreground animate-pulse">Loading community...</p>
         </div>
       </Layout>
     );
@@ -52,7 +55,7 @@ const Community = () => {
   if (error || !community) {
     return (
       <Layout>
-        <div className="p-4 bg-destructive/20 border border-destructive rounded-lg text-destructive">
+        <div className="p-5 bg-destructive/10 border border-destructive/30 rounded-2xl text-destructive animate-scale-in">
           {error || 'Community not found'}
         </div>
       </Layout>
@@ -61,32 +64,41 @@ const Community = () => {
 
   return (
     <Layout>
-      <div className="glass-card rounded-xl p-6 mb-6">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-            <Users className="w-8 h-8 text-primary-foreground" />
+      {/* Community Header */}
+      <div className="glass-card rounded-3xl p-8 mb-8 animate-fade-in">
+        <div className="flex items-center gap-5">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-2xl">
+            <Users className="w-10 h-10 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold gradient-text">{community.name}</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight gradient-text mb-2">
+              {community.name}
+            </h1>
+            <p className="text-muted-foreground text-lg font-light">
               {community.description || 'Welcome to this community'}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="space-y-4">
+      {/* Posts */}
+      <div className="space-y-5">
         {posts.map((post, index) => (
-          <div key={post.id} style={{ animationDelay: `${index * 0.1}s` }}>
-            <PostCard post={post} onLikeUpdate={handleLikeUpdate} />
-          </div>
+          <PostCard 
+            key={post.id} 
+            post={post} 
+            onLikeUpdate={handleLikeUpdate}
+            index={index}
+          />
         ))}
 
         {posts.length === 0 && (
-          <div className="glass-card rounded-xl p-12 text-center">
-            <Inbox className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-foreground mb-2">No posts yet</h3>
-            <p className="text-muted-foreground">
+          <div className="glass-card rounded-3xl p-16 text-center animate-fade-in">
+            <div className="w-20 h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-6">
+              <Inbox className="w-10 h-10 text-muted-foreground" />
+            </div>
+            <h3 className="text-2xl font-semibold text-foreground mb-3">No posts yet</h3>
+            <p className="text-muted-foreground text-lg font-light">
               Be the first to post in this community!
             </p>
           </div>
